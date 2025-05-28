@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Love</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Special Elite', cursive; /* Changed font to Special Elite, with cursive as fallback for broader compatibility */
+            background: linear-gradient(to bottom right, #EFE9E2, #B08E7B, #914D3C, #A61E1A);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        @keyframes pulse-heart {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .heart-animation {
+            animation: pulse-heart 2s infinite ease-in-out;
+        }
+
+        /* Typewriter effect: Ensures text is hidden and cursor blinks */
+        .typewriter-text {
+            overflow: hidden; /* Ensures text is hidden until typed */
+            border-right: .15em solid #A61E1A; /* Blinking cursor */
+            animation: blink-caret .75s step-end infinite; /* Only blink-caret remains here */
+        }
+
+        /* Blinking cursor animation */
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #A61E1A; }
+        }
+
+        /* Fade in animation for the button */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in-animation {
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+    </style>
+</head>
+<body class="text-[#332724]">
+    <div class="container mx-auto p-4 flex flex-col items-center justify-center text-center">
+        <div id="heart-container" class="cursor-pointer transition-all duration-300 hover:scale-105">
+            <svg id="animated-heart" class="w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80 text-[#8C220A] heart-animation" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <p id="click-here-text" class="mt-4 text-lg sm:text-xl md:text-2xl font-semibold text-[#332724]">click here</p>
+        </div>
+
+        <div id="message-area" class="hidden mt-8 p-6 bg-white bg-opacity-40 rounded-3xl shadow-xl max-w-xl w-full">
+            <p id="typewriter-output" class="text-xl sm:text-2xl md:text-3xl font-medium text-[#332724] leading-relaxed"></p>
+        </div>
+
+        <button id="press-me-button" class="hidden mt-8 px-8 py-4 bg-[#D62F27] text-white text-xl sm:text-2xl font-bold rounded-full shadow-lg hover:bg-[#A61E1A] transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-[#B08E7B]">
+            press me
+        </button>
+
+        <div id="affirmation-area" class="hidden mt-8 p-6 bg-white bg-opacity-80 rounded-3xl shadow-xl max-w-xl w-full">
+            <p id="affirmation-output" class="text-xl sm:text-2xl md:text-3xl font-medium text-[#332724] leading-relaxed"></p>
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const heartContainer = document.getElementById('heart-container');
+        const animatedHeart = document.getElementById('animated-heart');
+        const clickHereText = document.getElementById('click-here-text');
+        const messageArea = document.getElementById('message-area');
+        const typewriterOutput = document.getElementById('typewriter-output');
+        const pressMeButton = document.getElementById('press-me-button');
+        const affirmationArea = document.getElementById('affirmation-area');
+        const affirmationOutput = document.getElementById('affirmation-output');
+
+        // Heartfelt message lines
+        const messages = [
+            "Hi Baby",
+            "We are pretty far from each other right now",
+            "but I never want us to feel distant",
+            "so I'm making this for whenever you need to feel me around",
+            "no matter the distance",
+            "I'm always with you",
+            "i love you 3000"
+        ];
+
+        // Sweet and supportive affirmations
+        const affirmations = [
+            "You are loved more than you know.",
+            "You are never alone.",
+            "You’ve got this, baby!",
+            "I'm so proud of you.",
+            "You bring so much joy into my life.",
+            "Thinking of you always.",
+            "You're amazing, just the way you are.",
+            "Every day with you is a gift.",
+            "You inspire me to be better.",
+            "Your smile brightens my world.",
+            "I cherish every moment we share.",
+            "You are my favorite thought.",
+            "Missing you, but loving you more.",
+            "You make my heart happy.",
+            "You're stronger than you think.",
+            "Believe in yourself, I do.",
+            "Your presence is a comfort.",
+            "I'm grateful for you every day.",
+            "You light up my life.",
+            "You're doing great, keep going!",
+            "I'm always here to listen.",
+            "Your dreams are important to me.",
+            "You deserve all the happiness.",
+            "You're my sunshine on a cloudy day.",
+            "I admire your strength.",
+            "You make the world a better place.",
+            "Just thinking of you makes me smile.",
+            "You're my favorite adventure.",
+            "I love your quirks and all.",
+            "You're truly one of a kind.",
+            "My heart skips a beat for you.",
+            "You're my perfect match.",
+            "I'm so lucky to have you.",
+            "You're a constant source of joy.",
+            "You're worth every effort.",
+            "I'm always in your corner.",
+            "You're my safe place.",
+            "You're incredibly handsome/beautiful.",
+            "I love the way you make me feel.",
+            "You're my greatest blessing.",
+            "You're more than enough.",
+            "You're my everything.",
+            "I fall for you more each day.",
+            "You're the missing piece of my puzzle.",
+            "You're simply irresistible.",
+            "You're my favorite notification.",
+            "You're my happy place.",
+            "You're my best friend and my love.",
+            "You make life so much sweeter.",
+            "I'm counting down the days until we meet again.",
+            "You're always on my mind.",
+            "You're my forever and always.",
+            "You're the reason I smile.",
+            "You're my greatest love story.",
+            "You're my soulmate.",
+            "You're my destiny.",
+            "You're my chosen one.",
+            "You're my dream come true.",
+            "You're my guiding star.",
+            "You're my anchor.",
+            "You're my calm in the storm.",
+            "You're my favorite person.",
+            "You're my inspiration.",
+            "You're my rock.",
+            "You're my everything.",
+            "You're my perfect imperfect.",
+            "You're my favorite hello and hardest goodbye.",
+            "You're my reason to believe.",
+            "You're my happily ever after.",
+            "You're my sweet escape.",
+            "You're my favorite distraction.",
+            "You're my favorite view.",
+            "You're my favorite song.",
+            "You're my favorite feeling.",
+            "You're my favorite memory.",
+            "You're my favorite future.",
+            "You're my favorite past, present, and future.",
+            "You're my favorite person to annoy.",
+            "You're my favorite human.",
+            "You're my favorite reason to smile."
+        ];
+
+        /**
+         * Simulates a typewriter effect for a given text on an element.
+         * @param {HTMLElement} element - The DOM element to type into.
+         * @param {string} text - The text to be typed.
+         * @param {number} speed - The speed of typing in milliseconds per character.
+         * @param {function} callback - A function to call after typing is complete.
+         */
+        function typeWriter(element, text, speed, callback) {
+            let i = 0;
+            element.innerHTML = ''; // Clear content before typing
+            element.classList.add('typewriter-text'); // Add typewriter cursor and overflow behavior
+
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    element.classList.remove('typewriter-text'); // Remove cursor after typing is complete
+                    if (callback) {
+                        callback();
+                    }
+                }
+            }
+            type();
+        }
+
+        /**
+         * Displays the heartfelt message line by line with typewriter animation.
+         * Fades in the "press me" button after the message is complete.
+         */
+        function displayHeartfeltMessage() {
+            let lineIndex = 0;
+            const delayBetweenLines = 1500; // Delay before starting the next line
+
+            function typeNextLine() {
+                if (lineIndex < messages.length) {
+                    typeWriter(typewriterOutput, messages[lineIndex], 50, () => {
+                        lineIndex++;
+                        if (lineIndex < messages.length) {
+                            // Add a line break after each line except the last one
+                            typewriterOutput.innerHTML += '<br>';
+                            setTimeout(typeNextLine, delayBetweenLines);
+                        } else {
+                            // After the last line, fade in the "press me" button
+                            setTimeout(() => {
+                                pressMeButton.classList.remove('hidden');
+                                pressMeButton.classList.add('fade-in-animation');
+                            }, 1000); // Delay before fading in the button
+                        }
+                    });
+                }
+            }
+            typeNextLine();
+        }
+
+        /**
+         * Displays a random affirmation message.
+         */
+        function showRandomAffirmation() {
+            const randomIndex = Math.floor(Math.random() * affirmations.length);
+            const affirmation = affirmations[randomIndex];
+            affirmationOutput.textContent = affirmation;
+            affirmationArea.classList.remove('hidden');
+            affirmationArea.classList.add('fade-in-animation'); // Apply fade-in animation
+        }
+
+        // Event listener for the heart click
+        heartContainer.addEventListener('click', () => {
+            // Hide the heart and "click here" text
+            heartContainer.classList.add('hidden');
+            clickHereText.classList.add('hidden');
+
+            // Show the message area
+            messageArea.classList.remove('hidden');
+            messageArea.classList.add('fade-in-animation'); // Apply fade-in animation
+
+            // Start displaying the message
+            displayHeartfeltMessage();
+        });
+
+        // Event listener for the "press me" button click
+        pressMeButton.addEventListener('click', showRandomAffirmation);
+
+        // Initial setup on page load (optional, but good practice)
+        window.onload = () => {
+            // Ensure elements are in their initial hidden state if JavaScript loads slowly
+            messageArea.classList.add('hidden');
+            pressMeButton.classList.add('hidden');
+            affirmationArea.classList.add('hidden');
+        };
+    </script>
+</body>
+</html>
